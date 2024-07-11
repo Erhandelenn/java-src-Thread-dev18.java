@@ -12,22 +12,18 @@ public class ThreadTask {
         for (int i = 0; i < MAX_NUMBER; i++) {
             int num = i + 1;
             threadPool.execute(() -> {
-                synchronized (counter) {
-                    while (counter.get() != num) {
+                while (true) {
+                    int current = counter.get();
+                    if (current == num) {
                         try {
-                            counter.wait();
+                            Thread.sleep(100);
                         } catch (InterruptedException e) {
                             e.printStackTrace();
                         }
+                        System.out.println("Sayı: " + num);
+                        counter.incrementAndGet();
+                        break;
                     }
-                    try {
-                        Thread.sleep(100);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    System.out.println("Sayı: " + num );
-                    counter.incrementAndGet();
-                    counter.notifyAll();
                 }
             });
         }
